@@ -83,17 +83,22 @@ keepnames<-names(temp)
     temp$user_name<-as.factor(temp$user_name)
     temp$new_window<-as.factor(temp$new_window)
     fitControl<-trainControl(method="repeatedcv",
-                             preProcOptions=list(thresh = 0.95),
-                             number=5,
-                             repeats=5)
+                             number=10,
+                             repeats=10)
     randforestfit<-train(classe~.,temp,
                          method="rf", 
-                         ntree=200,
-                         preProc=c("pca"),
+                         ntree=350,
+                         preProc=c("center","scale"),
                          tuneLength =3,
                          trControl=fitControl)
 
 # make MLvalid same as MLtrain (factors, remove columns)
-    MLvalidsmall<-MLvalid[,-lowVar]
-    MLvalidsmall$classe<-as.factor(MLvalidsmall$classe)
-    names(MLvalidsmall)<-gsub("picth","pitch",names(MLvalidsmall))
+    names(MLvalid)<-gsub("picth","pitch",names(MLvalid))
+    validset<-MLvalid[,which(colnames(MLvalid) %in% keepnames)]
+    validset$classe<-as.factor(validset$classe)
+    validset$user_name<-as.factor(validset$user_name)
+    validset$new_window<-as.factor(validset$new_window)
+
+# do the prediction on validation set
+    prediction<-predict(randforestfit,validset)
+    confusionMatrix(prediction,validset$classe)
