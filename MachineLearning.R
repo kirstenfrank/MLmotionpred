@@ -41,88 +41,42 @@ keepnames<-names(temp)
 
 
 # Plots to reveal any structure.
-    featurePlot(x=MLtrainsmall[,c("num_window","roll_belt","pitch_belt")],
-            y=MLtrainsmall$classe,plot="pairs")  
-    # X seems to separate well with num_window.
-    featurePlot(x=MLtrainsmall[,c("yaw_belt","total_accel_belt","gyros_belt_x","gyros_belt_y")],
-            y=MLtrainsmall$classe,plot="pairs")  
-    # maybe yaw_belt
-    featurePlot(x=MLtrainsmall[,c("gyros_belt_z","accel_belt_x","accel_belt_y","accel_belt_z")],
-            y=MLtrainsmall$classe,plot="pairs")                
-    # maybe gyros_belt_z And combo of gyros_belt_z and accel_belt_z
-    featurePlot(x=MLtrainsmall[,c("magnet_belt_x","magnet_belt_y","magnet_belt_z","roll_arm")],
-            y=MLtrainsmall$classe,plot="pairs")  
-    # some separation in roll_arm
-    featurePlot(x=MLtrainsmall[,c("pitch_arm","yaw_arm","total_accel_arm","gyros_arm_x")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # some separation in pitch_arm and yaw_arm
-    featurePlot(x=MLtrainsmall[,c("var_yaw_belt","gyros_belt_x","gyros_belt_y","gyros_belt_z")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # Outlier in var_yaw_belt, separation in gyros_belt_z
-    featurePlot(x=MLtrainsmall[,c("accel_belt_x","accel_belt_y","accel_belt_z","magnet_belt_x")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # No separation
-    featurePlot(x=MLtrainsmall[,c("magnet_belt_y","magnet_belt_z","roll_arm","pitch_arm")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # Some separation in pitch_arm and in magnet_belt_y
-    featurePlot(x=MLtrainsmall[,c("yaw_arm","total_accel_arm","var_accel_arm","gyros_arm_x")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # Some separation in yaw_arm
-    featurePlot(x=MLtrainsmall[,c("gyros_arm_z","accel_arm_x","accel_arm_y","gyros_arm_y")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # No good separation
-    featurePlot(x=MLtrainsmall[,c("accel_arm_z","magnet_arm_x","magnet_arm_y","magnet_arm_z")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # Dancing slugs, but no good separation
-    featurePlot(x=MLtrainsmall[,c("max_roll_arm","max_pitch_arm","max_yaw_arm","min_roll_arm")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # Some separation in all
-    featurePlot(x=MLtrainsmall[,c("min_pitch_arm","min_yaw_arm","amplitude_roll_arm","amplitude_pitch_arm")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # Set of about 6 outliers (different group) in amplitude_pitch_arm
-    featurePlot(x=MLtrainsmall[,c("amplitude_yaw_arm","roll_dumbbell","pitch_dumbbell","yaw_dumbbell")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # amplitude_yaw_arm is good separation.
-    featurePlot(x=MLtrainsmall[,c("max_roll_dumbbell","min_roll_dumbbell","max_pitch_dumbbell","min_pitch_dumbbell")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # Spread but not much separation
-    featurePlot(x=MLtrainsmall[,c("amplitude_roll_dumbbell","total_accel_dumbbell","amplitude_pitch_dumbbell","var_accel_dumbbell")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # Two outliers in var_accel_dumbbell, good spread
-    featurePlot(x=MLtrainsmall[,c("avg_roll_dumbbell","stddev_roll_dumbbell","var_roll_dumbbell","avg_pitch_dumbbell")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # combination of stddev_roll_dumbbell and var_roll_dumbbell spreads on a curve
-    featurePlot(x=MLtrainsmall[,c("stddev_pitch_dumbbell","var_pitch_dumbbell","avg_yaw_dumbbell","stddev_yaw_dumbbell")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # One outlier in var_pitch_dumbbell and one in stddev_yaw_dumbbell
-    featurePlot(x=MLtrainsmall[,c("gyros_dumbbell_x","gyros_dumbbell_y","gyros_dumbbell_z","accel_dumbbell_x")],
-            y=MLtrainsmall$classe,plot="pairs") 
-    # some separation in gyros_dumbbell_x
-    featurePlot(x=MLtrainsmall[,c("accel_dumbbell_y","accel_dumbbell_z","magnet_dumbbell_x","magnet_dumbbell_y")],
-            y=MLtrainsmall$classe,plot="pairs")
-    # Some separation for blue in accel_dumbbell_z
-    featurePlot(x=MLtrainsmall[,c("magnet_dumbbell_z","roll_forearm","pitch_forearm","yaw_forearm")],
-            y=MLtrainsmall$classe,plot="pairs")
-    # some separation in pitch_forearm, maybe some in magnet_dumbbell_z
-    featurePlot(x=MLtrainsmall[,c("max_roll_forearm","min_roll_forearm","max_pitch_forearm","min_pitch_forearm")],
-            y=MLtrainsmall$classe,plot="pairs")
-    # separation in all four variables
-    featurePlot(x=MLtrainsmall[,c("amplitude_roll_forearm","amplitude_pitch_forearm","total_accel_forearm","var_accel_forearm")],
-            y=MLtrainsmall$classe,plot="pairs")
-    # some separation in amplitude_roll_forearm
-    featurePlot(x=MLtrainsmall[,c("gyros_forearm_x","gyros_forearm_y","gyros_forearm_z","accel_forearm_x")],
-            y=MLtrainsmall$classe,plot="pairs")
-    # very little separation
-    featurePlot(x=MLtrainsmall[,c("accel_forearm_y","accel_forearm_z","magnet_forearm_x","magnet_forearm_y")],
-            y=MLtrainsmall$classe,plot="pairs")
-    # No good separation
-    featurePlot(x=MLtrainsmall[,c("pitch_forearm","max_roll_forearm","amplitude_roll_forearm","magnet_forearm_z")],
-            y=MLtrainsmall$classe,plot="pairs")
-    # Little separation in magnet_forearm_z
-    featurePlot(x=MLtrainsmall[,c("pitch_forearm","gyros_dumbbell_x","amplitude_yaw_arm","yaw_arm","num_window","X")],
-            y=MLtrainsmall$classe,plot="pairs")  
-    # X and num_window are still the best separators
-
+    featurePlot(x=temp[,c("num_window","roll_belt","pitch_belt","yaw_belt","pitch_arm","roll_dumbbell")],
+            y=temp$classe,plot="pairs")  
+    # roll_dumbbell and pitch_arm seem to separate well with num_window.
+    featurePlot(x=temp[,c("total_accel_belt","gyros_belt_x","gyros_belt_y","gyros_belt_z","accel_belt_x")],
+            y=temp$classe,plot="pairs")  
+    # only a little separation
+    featurePlot(x=temp[,c("accel_belt_y","accel_belt_z","magnet_belt_x","magnet_belt_y","magnet_belt_z")],
+            y=temp$classe,plot="pairs")                
+    # spreads out the red class from the yellow class
+    featurePlot(x=temp[,c("roll_arm","pitch_arm","yaw_arm","total_accel_arm","gyros_arm_x")],
+            y=temp$classe,plot="pairs")  
+    # some separation in roll_arm, pitch_arm,yaw_arm, total_accel_arm.
+    # This is the first thing that separates the green class (pitch_arm)
+    featurePlot(x=temp[,c("gyros_arm_y","gyros_arm_z","accel_arm_x","accel_arm_y","accel_arm_z")],
+            y=temp$classe,plot="pairs") 
+    # a bit of separation between pink and yellow and red and yellow
+    featurePlot(x=temp[,c("magnet_arm_x","magnet_arm_y","magnet_arm_z","roll_dumbbell","pitch_dumbbell")],
+            y=temp$classe,plot="pairs") 
+    # Dancing slugs, but pitch_dumbbell separates pinks
+    featurePlot(x=temp[,c("yaw_dumbbell","total_accel_dumbbell","gyros_dumbbell_x","gyros_dumbbell_y","gyros_dumbbell_z")],
+            y=temp$classe,plot="pairs") 
+    # Some separation pink and red in gyros_dumbbell_x
+    featurePlot(x=temp[,c("accel_dumbbell_x","accel_dumbbell_y","accel_dumbbell_z","magnet_dumbbell_x","magnet_dumbbell_y","magnet_dumbbell_z")],
+            y=temp$classe,plot="pairs") 
+    # magnet_dumbbell_z with magnet_dumbbell_x separate pink well
+    # accel_dumbbell_z separates blue well
+    featurePlot(x=temp[,c("roll_forearm","pitch_forearm","yaw_forearm","total_accel_forearm","gyros_forearm_x")],
+            y=temp$classe,plot="pairs") 
+    # Blue separates out a lot in roll_forearm and pitch_forearm, red separates in 
+    featurePlot(x=temp[,c("gyros_forearm_y","gyros_forearm_z","accel_forearm_x","accel_forearm_y","accel_forearm_z")],
+            y=temp$classe,plot="pairs") 
+    # Some blue separation in gyros_forearm_z
+    featurePlot(x=temp[,c("magnet_forearm_x","magnet_forearm_y","magnet_forearm_z")],
+            y=temp$classe,plot="pairs") 
+    # Wow, these look like worms!!
+   
 
 # Training with Random Forest
     temp$classe<-as.factor(temp$classe)
