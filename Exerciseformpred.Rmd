@@ -1,0 +1,27 @@
+---
+title: "Prediction of exercise form"
+author: "Kirsten Frank"
+date: "November 22, 2014"
+output: html_document
+---
+
+
+The use of inexpensive motion sensors, accelerometers, magnetometers,  and other devices promises to revolutionize exercise coaching. This devices allow a coach to examine fine details of the exerciser's position, motion and timing. Other devices can be attached to the exercise equipment and measure the position, motion and timing of the equipment. This data requires a lot of processing before it can interpreted. 
+
+There are two proposals for methods to do this processing. One is to process into a physical representation of the motion and compare it to an idealized model of the exercise. The other is to measure people doing the exercise and let computers find the pattern and make a model using machine learning. 
+
+Data collected on six male volunteers each doing a dumbbell curl in five different ways. Four of these ways are mistakes that a coach would correct and the other is the correct way. 
+
+The data was made available freely, thanks to researchers.
+
+```{r download data}
+URLtrain<-"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+download.file(URLtrain,destfile="training.csv",method="curl")
+trainset<-read.csv("training.csv",stringsAsFactors=FALSE)
+
+URLtest<-"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+download.file(URLtest,destfile="testing.csv",method="curl")
+testset<-read.csv("testing.csv",stringsAsFactors=FALSE)
+```
+
+The data have `r ncol(trainset)` columns. Many of them are summary columns and don't contain values at every point. 
