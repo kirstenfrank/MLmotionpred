@@ -102,3 +102,8 @@ keepnames<-names(temp)
 # do the prediction on validation set
     prediction<-predict(randforestfit,validset)
     confusionMatrix(prediction,validset$classe)
+
+# do the prediction on test set
+    names(testset)<-gsub("picth","pitch",names(testset))
+    cleantest<-testset[,which(colnames(testset) %in% keepnames)]
+    prediction2<-predict(randforestfit,cleantest)
