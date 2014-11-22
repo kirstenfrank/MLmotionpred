@@ -76,7 +76,9 @@ keepnames<-names(temp)
     featurePlot(x=temp[,c("magnet_forearm_x","magnet_forearm_y","magnet_forearm_z")],
             y=temp$classe,plot="pairs") 
     # Wow, these look like worms!!
-   
+    featurePlot(x=temp[seq(1,nrow(temp),by=150),c("num_window","pitch_arm",
+                                                  "roll_dumbbell","pitch_dumbbell","roll_belt","pitch_forearm")],
+            y=temp$classe[seq(1,nrow(temp),150)],plot="pairs") # lots of the top components
 
 # Training with Random Forest
     temp$classe<-as.factor(temp$classe)
