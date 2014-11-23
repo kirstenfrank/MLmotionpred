@@ -69,7 +69,7 @@ keepnames<-names(temp)
     # accel_dumbbell_z separates blue well
     featurePlot(x=temp[,c("roll_forearm","pitch_forearm","yaw_forearm","total_accel_forearm","gyros_forearm_x")],
             y=temp$classe,plot="pairs") 
-    # Blue separates out a lot in roll_forearm and pitch_forearm, red separates in 
+    # Blue separates out a lot in roll_forearm and pitch_forearm
     featurePlot(x=temp[,c("gyros_forearm_y","gyros_forearm_z","accel_forearm_x","accel_forearm_y","accel_forearm_z")],
             y=temp$classe,plot="pairs") 
     # Some blue separation in gyros_forearm_z
@@ -78,7 +78,8 @@ keepnames<-names(temp)
     # Wow, these look like worms!!
     featurePlot(x=temp[seq(1,nrow(temp),by=150),c("num_window","pitch_arm",
                                                   "roll_dumbbell","pitch_dumbbell","roll_belt","pitch_forearm")],
-            y=temp$classe[seq(1,nrow(temp),150)],plot="pairs") # lots of the top components
+            y=temp$classe[seq(1,nrow(temp),150)],plot="pairs") 
+    # lots of the top components
 
 # Training with Random Forest
     temp$classe<-as.factor(temp$classe)
@@ -109,3 +110,14 @@ keepnames<-names(temp)
     names(testset)<-gsub("picth","pitch",names(testset))
     cleantest<-testset[,which(colnames(testset) %in% keepnames)]
     prediction2<-predict(randforestfit,cleantest)
+
+
+# submission script from J. Leek
+# input to pml_write_files is a list of characters 20 long.
+pml_write_files = function(x){
+    n = length(x)
+    for(i in 1:n){
+        filename = paste0("problem_id_",i,".txt")
+        write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+    }
+}
