@@ -1,14 +1,47 @@
 ---
 title: "Prediction of exercise form"
 author: "Kirsten Frank"
-date: "November 22, 2014"
+date: "November 23, 2014"
 output:
   html_document:
     keep_md: yes
 ---
-Summary
-__________________________________________________________________
+references:
+- id: ugulino2012
+  title: Wearable Computing: Accelerometers' Data Classification of Body Postures and Movements
+  author:
+  - family: Ugulino
+    given: W.
+  - family: Cardador
+    given: D.
+  - family: Vega
+    given: K.
+  - family: Velloso
+    given: E.
+  - family: Milidiu
+    given: R.
+  - family Fuks
+    given: H.
+  container-title: Lecture Notes in Computer Science
+  DOI: 10.1007/978-3-642-34459-6_6
+  issued:
+    year: 2012
+  page: 52-61
 
+- id: breiman2001
+  title: Random forests
+  author: 
+  - family: Breiman
+    given: Leo
+  container-title: Machine Learning
+  issued: 
+    year: 2001
+  page: 5-32
+
+---
+# Summary
+
+Machine learning was used to evaluate the feasibility of qualitatively assessing exercise quality in real time. The high accuracy of classification of exercise types demonstrated the fruitfulness of this approach.  
 
 # Background
 
@@ -21,7 +54,9 @@ There are two proposals for methods to do this processing. One is to process int
 ## Data collection
 Data collected on six male volunteers each doing a dumbbell curl in five different ways. Four of these ways are mistakes that a coach would correct and the other is the correct way. 
 
-The data was made available freely, thanks to researchers.
+The data was made available freely, thanks to researchers. Data is kindly supplied by http://groupware.les.inf.puc-rio.br/har with citations to their paper [@ugulino2012].
+
+Read more: http://groupware.les.inf.puc-rio.br/har#ixzz3Ibz6YXYU
 
 ```{r download data,cache=TRUE}
 URLtrain<-"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
@@ -83,27 +118,29 @@ In order to interpret the results of machine learning, we did not plan to use pr
 
 Preliminary plots comparing pairs of features were generated from the data. Data was chosen every 150 rows, so as to avoid overplotting that would obscure the data. An ideal pair of features would have points in 5 organized color groups, well separated, but no pair like that was found.
 
-```{r exploratory graphs,cache=TRUE}
-featurePlot(x=temp[seq(1,nrow(temp),by=150),c("num_window",
-                                              "pitch_arm",
-                                              "roll_dumbbell",
-                                              "pitch_dumbbell",
-                                              "roll_belt",
-                                              "pitch_forearm")],
-            y=temp$classe[seq(1,nrow(temp),150)],plot="pairs") 
+```{r exploratory graphs,cache=FALSE}
+library(caret)
+#featurePlot(x=temp[seq(1,nrow(temp),by=150),c("num_window",
+#                                              "pitch_arm",
+#                                              "roll_dumbbell",
+#                                              "pitch_dumbbell",
+#                                              "roll_belt",
+#                                              "pitch_forearm")],
+#            y=temp$classe[seq(1,nrow(temp),150)],plot="pairs") 
 
-featurePlot(x=temp[seq(1,nrow(temp),by=150),c("roll_forearm",
-                                              "pitch_forearm",
-                                              "yaw_forearm",
-                                              "total_accel_forearm",
-                                              "gyros_forearm_x")],
-            y=temp$classe[seq(1,nrow(temp),by=150)],plot="pairs") 
+#featurePlot(x=temp[seq(1,nrow(temp),by=150),c("roll_forearm",
+#                                              "pitch_forearm",
+#                                              "yaw_forearm",
+#                                              "total_accel_forearm",
+#                                              "gyros_forearm_x")],
+#            y=temp$classe[seq(1,nrow(temp),by=150)],plot="pairs") 
 ```
 
 ## Machine Learning and Prediction
 
-The method chosen for the machine learning was [Random Forests][1]. This method is very useful for classification prediction with many predictors. It is considered to be more robust to noise than many other classification parameters. 
-It is an ensemble extension of decision trees with an additional random component. Multiple trees are built using a random subset of the predictors. It can be built using k-fold cross-validation. After many attempts at training with various tunable parameters (number of trees, number of folds in the cross-validation, grid resolution for tuning the number of random predictors per tree), these parameters were chosen (number of trees=350, number of folds=10, grid resolution=3 divisions). 
+The method chosen for the machine learning was Random Forests [@breiman2001]. This method is very useful for classification prediction with many predictors. It is considered to be more robust to noise than many other classification parameters. 
+
+It is an ensemble extension of decision trees with an additional random component. Multiple trees are built using a random subset of the predictors. It can be built using k-fold cross-validation. After many attempts at training with various tunable parameters (number of trees, number of folds in the cross-validation, grid resolution for tuning the number of random predictors per tree), these parameters were chosen (number of trees=350, number of folds=10, grid resolution=3 divisions). Numerical variables were centered and scaled in preprocessing. 
 
 ```{r machine learning,cache=TRUE}
     fitControl<-trainControl(method="repeatedcv",
@@ -116,12 +153,65 @@ It is an ensemble extension of decision trees with an additional random componen
                          tuneLength =3,
                          trControl=fitControl)
 ```
+# Results and Conclusion
 
 The resulting model fit had an in-training-set accuracy of `r round(randforestfit$results$Accuracy[2],4)`. We then evaluated the influence of the various predictors.
-```{r Preditor influence, cache=TRUE}
+
+```{r Predictor influence, cache=TRUE}
 influence<-varImp(randforestfit)
-table<-influence[1]
+influence[1]
 ```
 
-The 5 most important predictors are `r influence[1]`, `r influence[2]`, 
-[1]: L. Breiman. Random forests. *Machine Learning*, pages 5-32, 2001.
+We used the list of retained columns to prepare the validation set for prediction. Prediction on the validation set allows us to calculate an out-of-sample error rate.
+
+```{r prepare validation set,cache=TRUE}
+# make MLvalid same as MLtrain (factors, remove columns)
+    names(MLvalid)<-gsub("picth","pitch",names(MLvalid))
+    validset<-MLvalid[,which(colnames(MLvalid) %in% keepnames)]
+    validset$classe<-as.factor(validset$classe)
+    validset$user_name<-as.factor(validset$user_name)
+    validset$new_window<-as.factor(validset$new_window)
+```
+
+```{r predict on validation set,cache=TRUE}
+# do the prediction on validation set
+    prediction<-predict(randforestfit,validset)
+    validationnumbers<-confusionMatrix(prediction,validset$classe)
+```
+
+Overall accuracy on the validation set (out-of-sample accuracy) was `r round(validationnumbers$overall[1],3)`. The accuracy by class was `r round(validationnumbers$byClass[1,8],3)` for class A (the correctly performed exercise); `r round(validationnumbers$byClass[2,8],3)` for class B; `r round(validationnumbers$byClass[3,8],3)` for class C; `r round(validationnumbers$byClass[4,8],3)` for class D; and `r round(validationnumbers$byClass[5,8],3)` for class E.
+
+In conclusion, machine learning using Random Forests works well for this type of data. 
+
+# References
+references:
+- id: ugulino2012
+  title: Wearable Computing: Accelerometers' Data Classification of Body Postures and Movements
+  author:
+  - family: Ugulino
+    given: W.
+  - family: Cardador
+    given: D.
+  - family: Vega
+    given: K.
+  - family: Velloso
+    given: E.
+  - family: Milidiu
+    given: R.
+  - family Fuks
+    given: H.
+  container-title: Lecture Notes in Computer Science
+  DOI: 10.1007/978-3-642-34459-6_6
+  issued:
+    year: 2012
+  page: 52-61
+
+- id: breiman2001
+  title: Random forests
+  author: 
+  - family: Breiman
+    given: Leo
+  container-title: Machine Learning
+  issued: 
+    year: 2001
+  page: 5-32
