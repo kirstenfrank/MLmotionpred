@@ -2,24 +2,28 @@
 title: "Prediction of exercise form"
 author: "Kirsten Frank"
 date: "November 22, 2014"
-output: html_document
+output:
+  html_document:
+    keep_md: yes
 ---
 Summary
 __________________________________________________________________
 
 
 # Background
+
 The use of inexpensive motion sensors, accelerometers, magnetometers,  and other devices promises to revolutionize exercise coaching. This devices allow a coach to examine fine details of the exerciser's position, motion and timing. Other devices can be attached to the exercise equipment and measure the position, motion and timing of the equipment. This data requires a lot of processing before it can interpreted. 
 
 There are two proposals for methods to do this processing. One is to process into a physical representation of the motion and compare it to an idealized model of the exercise. The other is to measure people doing the exercise and let computers find the pattern and make a model using machine learning. 
 
 # Methods
+
 ## Data collection
 Data collected on six male volunteers each doing a dumbbell curl in five different ways. Four of these ways are mistakes that a coach would correct and the other is the correct way. 
 
 The data was made available freely, thanks to researchers.
 
-```{r download data}
+```{r download data,cache=TRUE}
 URLtrain<-"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
 download.file(URLtrain,destfile="training.csv",method="curl")
 trainset<-read.csv("training.csv",stringsAsFactors=FALSE)
@@ -31,7 +35,7 @@ testset<-read.csv("testing.csv",stringsAsFactors=FALSE)
 ## Data processing
 In order to use machine learning on this corpus of data, we need to divide it into a training set and a validation set. The purpose of a validation set is to allow us to estimate out-of-sample error. 40% of the observations were put into the validation set, and the remaining 60% were used to train the model.
 
-```{r division into training and validation sets}
+```{r division into training and validation sets,cache=TRUE}
 library(caret)
 set.seed(1111)
 inTrain<-createDataPartition(trainset$classe,p=0.6,list=FALSE)
@@ -41,7 +45,7 @@ MLvalid<-trainset[-inTrain,]
 
 The data have `r ncol(trainset)` columns. Many of them are summary columns and don't contain values at every point. In order to use this data simply and effectively, columns that contained mostly NAs or blank characters were removed.
 
-```{r removal of NA columns}
+```{r removal of NA columns,cache=TRUE}
 temp <- MLtrain[, which(as.numeric(colSums(is.na(MLtrain))) < 500)]
 lowVar<-nearZeroVar(temp)  
 
@@ -56,7 +60,7 @@ temp<-temp[,-lowVar]
 
 Several other columns contained information that was specific to the experiment and unlikely to be generalizable, such as the datestamp and elapsed time. The X variable turned out to be an observation number (like a row number) and not generalizable. All of these were removed. The spelling error of picth instead of pitch was corrected and column names were saved to be used to remove columns from the validation set and the test set.
 
-```{r remove timestamps}
+```{r remove timestamps,cache=TRUE}
 names(temp)<-gsub("picth","pitch",names(temp))
 temp$raw_timestamp_part_1<-NULL
 temp$raw_timestamp_part_2<-NULL
@@ -67,10 +71,57 @@ keepnames<-names(temp)
 
 The user name was kept because the test set is a variety of exercises by the same 6 test subjects. With that information, our implementation will recognize an exercise type by any one of the 6 test subjects. We do acknowledge that using the user name as a feature prevents generalization to an arbitary individual. Several text columns were converted to factors.
 
-```{r convert to factors}
+```{r convert to factors,cache=TRUE}
     temp$classe<-as.factor(temp$classe)
     temp$user_name<-as.factor(temp$user_name)
     temp$new_window<-as.factor(temp$new_window)
 ```
 
 ## Data exploration
+
+In order to interpret the results of machine learning, we did not plan to use principal component analysis. This meant that we could explore the remaining `r ncol(temp)-1` features using their original names.
+
+Preliminary plots comparing pairs of features were generated from the data. Data was chosen every 150 rows, so as to avoid overplotting that would obscure the data. An ideal pair of features would have points in 5 organized color groups, well separated, but no pair like that was found.
+
+```{r exploratory graphs,cache=TRUE}
+featurePlot(x=temp[seq(1,nrow(temp),by=150),c("num_window",
+                                              "pitch_arm",
+                                              "roll_dumbbell",
+                                              "pitch_dumbbell",
+                                              "roll_belt",
+                                              "pitch_forearm")],
+            y=temp$classe[seq(1,nrow(temp),150)],plot="pairs") 
+
+featurePlot(x=temp[seq(1,nrow(temp),by=150),c("roll_forearm",
+                                              "pitch_forearm",
+                                              "yaw_forearm",
+                                              "total_accel_forearm",
+                                              "gyros_forearm_x")],
+            y=temp$classe[seq(1,nrow(temp),by=150)],plot="pairs") 
+```
+
+## Machine Learning and Prediction
+
+The method chosen for the machine learning was [Random Forests][1]. This method is very useful for classification prediction with many predictors. It is considered to be more robust to noise than many other classification parameters. 
+It is an ensemble extension of decision trees with an additional random component. Multiple trees are built using a random subset of the predictors. It can be built using k-fold cross-validation. After many attempts at training with various tunable parameters (number of trees, number of folds in the cross-validation, grid resolution for tuning the number of random predictors per tree), these parameters were chosen (number of trees=350, number of folds=10, grid resolution=3 divisions). 
+
+```{r machine learning,cache=TRUE}
+    fitControl<-trainControl(method="repeatedcv",
+                             number=10,
+                             repeats=10)
+    randforestfit<-train(classe~.,temp,
+                         method="rf", 
+                         ntree=350,
+                         preProc=c("center","scale"),
+                         tuneLength =3,
+                         trControl=fitControl)
+```
+
+The resulting model fit had an in-training-set accuracy of `r round(randforestfit$results$Accuracy[2],4)`. We then evaluated the influence of the various predictors.
+```{r Preditor influence, cache=TRUE}
+influence<-varImp(randforestfit)
+table<-influence[1]
+```
+
+The 5 most important predictors are `r influence[1]`, `r influence[2]`, 
+[1]: L. Breiman. Random forests. *Machine Learning*, pages 5-32, 2001.
