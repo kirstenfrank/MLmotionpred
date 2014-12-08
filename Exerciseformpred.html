@@ -59,12 +59,10 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 
 
-<p>references: - id: ugulino2012 title: Wearable Computing: Accelerometers’ Data Classification of Body Postures and Movements author: - family: Ugulino given: W. - family: Cardador given: D. - family: Vega given: K. - family: Velloso given: E. - family: Milidiu given: R. - family Fuks given: H. container-title: Lecture Notes in Computer Science DOI: 10.1007/978-3-642-34459-6_6 issued: year: 2012 page: 52-61</p>
-<ul>
-<li>id: breiman2001 title: Random forests author:</li>
-<li>family: Breiman given: Leo container-title: Machine Learning issued: year: 2001 page: 5-32 — # Summary</li>
-</ul>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
 <p>Machine learning was used to evaluate the feasibility of qualitatively assessing exercise quality in real time. The high accuracy of classification of exercise types demonstrated the fruitfulness of this approach.</p>
+</div>
 <div id="background" class="section level1">
 <h1>Background</h1>
 <p>The use of inexpensive motion sensors, accelerometers, magnetometers, and other devices promises to revolutionize exercise coaching. This devices allow a coach to examine fine details of the exerciser’s position, motion and timing. Other devices can be attached to the exercise equipment and measure the position, motion and timing of the equipment. This data requires a lot of processing before it can interpreted.</p>
@@ -75,7 +73,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <div id="data-collection" class="section level2">
 <h2>Data collection</h2>
 <p>Data collected on six male volunteers each doing a dumbbell curl in five different ways. Four of these ways are mistakes that a coach would correct and the other is the correct way.</p>
-<p>The data was made available freely, thanks to researchers. Data is kindly supplied by <a href="http://groupware.les.inf.puc-rio.br/har">http://groupware.les.inf.puc-rio.br/har</a> with citations to their paper <span class="citation">(<span class="citeproc-not-found" data-reference-id="ugulino2012"><strong>???</strong></span>)</span>.</p>
+<p>The data was made available freely, thanks to researchers. Data is kindly supplied by <a href="http://groupware.les.inf.puc-rio.br/har">http://groupware.les.inf.puc-rio.br/har</a> with citations to their paper <span class="citation">(Ugulino et al. 2012)</span>.</p>
 <p>Read more: <a href="http://groupware.les.inf.puc-rio.br/har#ixzz3Ibz6YXYU">http://groupware.les.inf.puc-rio.br/har#ixzz3Ibz6YXYU</a></p>
 <pre class="r"><code>URLtrain&lt;-&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;
 download.file(URLtrain,destfile=&quot;training.csv&quot;,method=&quot;curl&quot;)
@@ -141,7 +139,7 @@ keepnames&lt;-names(temp)</code></pre>
 </div>
 <div id="machine-learning-and-prediction" class="section level2">
 <h2>Machine Learning and Prediction</h2>
-<p>The method chosen for the machine learning was Random Forests <span class="citation">(<span class="citeproc-not-found" data-reference-id="breiman2001"><strong>???</strong></span>)</span>. This method is very useful for classification prediction with many predictors. It is considered to be more robust to noise than many other classification parameters.</p>
+<p>The method chosen for the machine learning was Random Forests <span class="citation">(Breiman 2001)</span>. This method is very useful for classification prediction with many predictors. It is considered to be more robust to noise than many other classification parameters.</p>
 <p>It is an ensemble extension of decision trees with an additional random component. Multiple trees are built using a random subset of the predictors. It can be built using k-fold cross-validation. After many attempts at training with various tunable parameters (number of trees, number of folds in the cross-validation, grid resolution for tuning the number of random predictors per tree), these parameters were chosen (number of trees=350, number of folds=10, grid resolution=3 divisions). Numerical variables were centered and scaled in preprocessing.</p>
 <pre class="r"><code>    fitControl&lt;-trainControl(method=&quot;repeatedcv&quot;,
                              number=10,
@@ -238,14 +236,10 @@ influence[1]</code></pre>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
-<p>references: - id: ugulino2012 title: Wearable Computing: Accelerometers’ Data Classification of Body Postures and Movements author: - family: Ugulino given: W. - family: Cardador given: D. - family: Vega given: K. - family: Velloso given: E. - family: Milidiu given: R. - family Fuks given: H. container-title: Lecture Notes in Computer Science DOI: 10.1007/978-3-642-34459-6_6 issued: - year: 2012 page: 52-61</p>
-<ul>
-<li>id: breiman2001 title: Random forests author:</li>
-<li>family: Breiman given: Leo container-title: Machine Learning issued:</li>
-<li>year: 2001 page: 5-32</li>
-</ul>
+<hr />
 <div class="references">
-
+<p>Breiman, Leo. 2001. “Random Forests.” <em>Machine Learning</em>: 5–32.</p>
+<p>Ugulino, W., D. Cardador, K. Vega, E. Velloso, R. Milidiu, and H. Fuks. 2012. “Wearable Computing: Accelerometers’ Data Classification of Body Postures and Movements.” <em>Lecture Notes in Computer Science</em>. doi:<a href="http://dx.doi.org/10.1007/978-3-642-34459-6_6">10.1007/978-3-642-34459-6_6</a>.</p>
 </div>
 </div>
 

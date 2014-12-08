@@ -1,39 +1,7 @@
 # Prediction of exercise form
 Kirsten Frank  
 November 23, 2014  
-references:
-- id: ugulino2012
-  title: Wearable Computing: Accelerometers' Data Classification of Body Postures and Movements
-  author:
-  - family: Ugulino
-    given: W.
-  - family: Cardador
-    given: D.
-  - family: Vega
-    given: K.
-  - family: Velloso
-    given: E.
-  - family: Milidiu
-    given: R.
-  - family Fuks
-    given: H.
-  container-title: Lecture Notes in Computer Science
-  DOI: 10.1007/978-3-642-34459-6_6
-  issued:
-    year: 2012
-  page: 52-61
 
-- id: breiman2001
-  title: Random forests
-  author: 
-  - family: Breiman
-    given: Leo
-  container-title: Machine Learning
-  issued: 
-    year: 2001
-  page: 5-32
-
----
 # Summary
 
 Machine learning was used to evaluate the feasibility of qualitatively assessing exercise quality in real time. The high accuracy of classification of exercise types demonstrated the fruitfulness of this approach.  
@@ -271,34 +239,5 @@ Overall accuracy on the validation set (out-of-sample accuracy) was 0.996. The a
 In conclusion, machine learning using Random Forests works well for this type of data. 
 
 # References
-references:
-- id: ugulino2012
-  title: Wearable Computing: Accelerometers' Data Classification of Body Postures and Movements
-  author:
-  - family: Ugulino
-    given: W.
-  - family: Cardador
-    given: D.
-  - family: Vega
-    given: K.
-  - family: Velloso
-    given: E.
-  - family: Milidiu
-    given: R.
-  - family Fuks
-    given: H.
-  container-title: Lecture Notes in Computer Science
-  DOI: 10.1007/978-3-642-34459-6_6
-  issued:
-    year: 2012
-  page: 52-61
 
-- id: breiman2001
-  title: Random forests
-  author: 
-  - family: Breiman
-    given: Leo
-  container-title: Machine Learning
-  issued: 
-    year: 2001
-  page: 5-32
+---
